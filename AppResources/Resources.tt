@@ -1,0 +1,76 @@
+﻿<#@ template debug="false" language="C#" hostspecific="True" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Globalization" #>
+<#@ import namespace="System.Resources" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="System.Linq" #>
+using System.Web;
+ 
+namespace AppResources 
+{
+	public class Messages 
+	{	
+		private static global::System.Resources.ResourceManager resourceMan;
+        
+		private static global::System.Globalization.CultureInfo resourceCulture;
+        
+		internal Messages() {
+		}
+        
+		public static global::System.Resources.ResourceManager ResourceManager {
+			get {
+				if (object.ReferenceEquals(resourceMan, null)) {
+					global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AppResources.Messages", typeof(Messages).Assembly);
+					resourceMan = temp;
+				}
+				return resourceMan;
+			}
+		}
+
+		public static string GetResourceString(string key) => ResourceManager.GetString(key, resourceCulture);
+        
+		public static global::System.Globalization.CultureInfo Culture {
+			get {
+				return resourceCulture;
+			}
+			set {
+				resourceCulture = value;
+			}
+		}
+    
+    <#
+			XmlDocument xdoc = new XmlDocument();
+            xdoc.Load(this.Host.ResolvePath("Messages.resx"));
+            foreach (var node in xdoc.SelectNodes("root/data").OfType<XmlNode>())
+            {
+                var key = node.Attributes["name"].Value;
+                var keyProp = key.Replace("/", "_").Replace(" ", "_").Replace(".", "_");
+                var comment = node["comment"];
+                var useInClientScript = false;
+                if(comment != null)
+                {
+                    useInClientScript = System.Text.RegularExpressions.Regex.IsMatch(comment.InnerText, @"\bJS\b");;
+                }
+		  #>
+
+		[ResourceProperty]
+    <#
+      if(comment != null)
+        {  #>
+    [UseInClientScript]
+    <#  } #>
+	public static string <#= keyProp #>
+        {
+            get
+			{
+				return GetResourceString("<#= key #>");
+			}
+		}
+		<#}#>}
+
+	public class UseInClientScriptAttribute : System.Attribute { }
+	public class ResourcePropertyAttribute : System.Attribute { }
+}

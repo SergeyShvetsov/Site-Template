@@ -28,10 +28,10 @@ namespace CoreWebSite
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationContext>(options =>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<ApplicationContext>();
+            // добавление сервисов Idenity
+            services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                        .AddEntityFrameworkStores<ApplicationContext>();
 
-            //services.AddIdentityServer( ).AddApiAuthorization<User, ApplicationContext>();
-            //services.AddAuthentication().AddIdentityServerJwt();
             services.AddRazorPages();
         }
 
