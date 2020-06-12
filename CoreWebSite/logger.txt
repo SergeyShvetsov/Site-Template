@@ -1,0 +1,4 @@
+Start application. 06/12/2020 15:44:33
+Application started. Press Ctrl+C to shut down.
+Hosting environment: Development
+Content root path: C:\Work\SiteTemplate\CoreWebSite

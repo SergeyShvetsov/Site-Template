@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Model;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace CoreWebSite
 {
@@ -27,7 +29,7 @@ namespace CoreWebSite
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationContext>(options =>options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             // добавление сервисов Idenity
             services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                         .AddEntityFrameworkStores<ApplicationContext>();
@@ -36,7 +38,11 @@ namespace CoreWebSite
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app
+            , IWebHostEnvironment env
+            , ILoggerFactory loggerFactory
+            )
         {
             if (env.IsDevelopment())
             {
@@ -61,6 +67,19 @@ namespace CoreWebSite
             {
                 endpoints.MapRazorPages();
             });
+
+            var logFile = Configuration.GetSection("LogFile").Value;
+            if (!string.IsNullOrEmpty(logFile))
+            {
+                var log = Path.Combine(Directory.GetCurrentDirectory(), logFile);
+                if (File.Exists(log))
+                {
+                    File.Delete(log);
+                }
+                loggerFactory.AddFile(log);
+                var logger = loggerFactory.CreateLogger("FileLogger");
+                logger.LogInformation("Start application. {0}", DateTime.Now);
+            }
         }
     }
 }
