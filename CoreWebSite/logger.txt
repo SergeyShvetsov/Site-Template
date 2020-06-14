@@ -1,4 +1,5 @@
-Start application. 06/12/2020 15:59:51
+Start application. 06/14/2020 14:41:47
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: C:\Work\SiteTemplate\CoreWebSite
+An unhandled exception has occurred while executing the request.

@@ -1,4 +1,8 @@
-Start application. 06/13/2020 20:07:48
+Start application. 06/14/2020 15:01:21
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: C:\Work\SiteTemplate\WebUI
+Invalid password for user 29235867-2958-4d94-9a47-bc12a4fc07bc.
+User 29235867-2958-4d94-9a47-bc12a4fc07bc failed to provide the correct password.
+User logged in.
+User logged out.
