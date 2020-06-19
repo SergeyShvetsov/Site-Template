@@ -41,6 +41,15 @@ namespace AppResources
 				return GetResourceString("HomePage");
 			}
 		}
+		
+		[ResourceProperty]
+    	public static string PhoneList
+        {
+            get
+			{
+				return GetResourceString("PhoneList");
+			}
+		}
 		}
 
 	public class UseInClientScriptAttribute : System.Attribute { }

@@ -120,4 +120,7 @@
   <data name="HomePage" xml:space="preserve">
     <value>Home Page XXX</value>
   </data>
+  <data name="PhoneList" xml:space="preserve">
+    <value>Phone List</value>
+  </data>
 </root>
