@@ -1,5 +1,5 @@
-Start application. 06/14/2020 14:41:47
+Start application. 06/20/2020 14:08:44
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
-Content root path: C:\Work\SiteTemplate\CoreWebSite
-An unhandled exception has occurred while executing the request.
+Content root path: D:\Work\SiteTemplate\CoreWebSite
+No type was specified for the decimal column 'Price' on entity type 'Phone'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values using 'HasColumnType()'.
