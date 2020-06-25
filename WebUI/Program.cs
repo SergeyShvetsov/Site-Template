@@ -23,7 +23,7 @@ namespace WebUI
                 try
                 {
                     var context = services.GetRequiredService<ApplicationContext>();
-                    InitData.Initialize(context);
+                    DBInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

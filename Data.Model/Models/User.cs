@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Data.Model.Models
 {
-    public class User : IdentityUser
+    public class User: IdentityUser
     {
-        public int Year { get; set; }
     }
 }

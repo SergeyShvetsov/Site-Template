@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200616124802_sampleMigration.cs" />
-    <Compile Remove="Migrations\20200616124802_sampleMigration.Designer.cs" />
-    <Compile Remove="Migrations\20200616130035_Initialize.cs" />
-    <Compile Remove="Migrations\20200616130035_Initialize.Designer.cs" />
+    <None Remove="Models\PagesDTO.cs~RFf44f28d.TMP" />
   </ItemGroup>
 
   <ItemGroup>

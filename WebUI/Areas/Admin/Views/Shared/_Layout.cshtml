@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
+    <title>@ViewData["Title"] - Admin Area</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <a class="navbar-brand" href="#">Navbar w/ text</a>
+            @Html.ActionLink("Dashboard", "Index", "Dashboard", null, new { @class = "navbar-brand" })
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -26,14 +26,22 @@
                         <a class="nav-link" href="#">Pricing</a>
                     </li>
                 </ul>
-                <span class="navbar-text">
+                <!-- New right menu-->
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a href="/" class="navbar-brand" target="_blank">Shopping Cart</a>
+                    </li>
+                </ul>
+                @*<span class="navbar-text">
                     Navbar text with an inline element
-                </span>
+                </span>*@
             </div>
         </nav>
-    </header>
+    </header> 
     <div class="container">
         <main role="main" class="pb-3">
+            <br />
+            <br />
             @RenderBody()
         </main>
     </div>

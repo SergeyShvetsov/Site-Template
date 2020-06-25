@@ -34,12 +34,15 @@ namespace WebUI
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(connection));
 
-            // добавление сервисов Idenity
-            services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-                        .AddEntityFrameworkStores<ApplicationContext>();
+            //// добавление сервисов Idenity
+            //services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+            //            .AddEntityFrameworkStores<ApplicationContext>();
 
-            services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddControllersWithViews(mvcOtions =>
+            {
+                mvcOtions.EnableEndpointRouting = false;
+            });
+            //services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,40 +61,19 @@ namespace WebUI
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
-
             app.UseAuthentication();    // подключение аутентификации
             app.UseAuthorization();
 
-            //app.Use(async (context, next) =>
-            //{
-            //    // получаем конечную точку
-            //    Endpoint endpoint = context.GetEndpoint();
-
-            //    if (endpoint != null)
-            //    {
-            //        // получаем шаблон маршрута, который ассоциирован с конечной точкой
-            //        var routePattern = (endpoint as Microsoft.AspNetCore.Routing.RouteEndpoint)?.RoutePattern?.RawText;
-
-            //        Debug.WriteLine($"Endpoint Name: {endpoint.DisplayName}");
-            //        Debug.WriteLine($"Route Pattern: {routePattern}");
-
-            //        // если конечная точка определена, передаем обработку дальше
-            //        await next();
-            //    }
-            //    else
-            //    {
-            //        Debug.WriteLine("Endpoint: null");
-            //        // если конечная точка не определена, завершаем обработку
-            //        await context.Response.WriteAsync("Endpoint is not defined");
-            //    }
-            //});
-
-            app.UseEndpoints(endpoints =>
+            app.UseMvc(routes =>
             {
-                endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                routes.MapRoute(name: "areas", template: "{area=Admin}/{controller=Pages}/{action=Index}/{id?}");
             });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+            //    endpoints.MapRazorPages();
+            //});
 
             #region Logger
             var logFile = Configuration.GetSection("LogFile").Value;
