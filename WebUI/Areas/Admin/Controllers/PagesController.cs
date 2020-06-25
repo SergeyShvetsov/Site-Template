@@ -69,12 +69,14 @@ namespace WebUI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult EditPage(Guid id)
         {
-            var item = db.Pages.FirstOrDefault(x => x.Id == id);
+            var item = db.Pages.Find(id);
             if (item != null)
             {
                 return View(new PageVM(item));
             }
-            return RedirectToAction("Index");
+
+            return Content("The page does not exist.");
+            //return RedirectToAction("Index");
         }
         [HttpPost]
         public IActionResult EditPage(PageVM model)
@@ -98,7 +100,11 @@ namespace WebUI.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var dto = db.Pages.FirstOrDefault(x => x.Id == model.Id);
+            var dto = db.Pages.Find(model.Id);
+            if (dto == null)
+            {
+                return Content("The page does not exist.");
+            }
             model.ToDbModel(dto);
             db.SaveChanges();
 
@@ -106,7 +112,56 @@ namespace WebUI.Areas.Admin.Controllers
             TempData["SM"] = "You have edited page!";
 
             // Переадрессовываем пользователя на метод Index
-            return RedirectToAction("Index");
+            return RedirectToAction("EditPage");
+        }
+
+        public IActionResult PageDetails(Guid id)
+        {
+            var item = db.Pages.Find(id);
+            if (item != null)
+            {
+                return View(new PageVM(item));
+            }
+
+            return Content("The page does not exist.");
+        }
+
+        public IActionResult DeletePage(Guid id)
+        {
+            var item = db.Pages.Find(id);
+            if (item != null)
+            {
+                db.Pages.Remove(item);
+                db.SaveChanges();
+
+                TempData["SM"] = "You have deleted a page!";
+                return RedirectToAction("Index");
+            }
+
+
+            return Content("The page does not exist.");
+        }
+
+        // Создаем метод сортировки
+        [HttpPost]
+        public void ReorderPages(string ids)
+        {
+            var idsArray = ids.Replace("id_","").Replace("[]=","-").Split('&');
+
+            
+            int count = 1; // Реализуем счетчик  
+
+            PagesDTO dto;
+            // Устанавливаем сортировку для каждой страницы
+            foreach(var pageId in idsArray)
+            {
+                var guid = new Guid(pageId);
+                dto = db.Pages.Find(guid);
+                dto.Sorting = count;
+
+                db.SaveChanges();
+                count++;
+            }
         }
     }
 }

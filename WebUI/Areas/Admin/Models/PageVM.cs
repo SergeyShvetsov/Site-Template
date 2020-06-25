@@ -61,12 +61,12 @@ namespace WebUI.Areas.Admin.Models
             else
             {
                 res = src;
+                res.Sorting = this.Sorting;
             }
 
             res.Title = this.Title;
             res.Slug = this.Slug;
             res.Body = this.Body;
-            res.Sorting = this.Sorting;
             res.HasSidebar = this.HasSidebar;
 
             return res;
