@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.Model.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Razor.Language;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 using WebUI.Areas.Admin.Models;
+using Data.Tools.Extensions;
 
 namespace WebUI.Areas.Admin.Controllers
 {
@@ -146,14 +151,14 @@ namespace WebUI.Areas.Admin.Controllers
         [HttpPost]
         public void ReorderPages(string ids)
         {
-            var idsArray = ids.Replace("id_","").Replace("[]=","-").Split('&');
+            var idsArray = ids.Replace("id_", "").Replace("[]=", "-").Split('&');
 
-            
+
             int count = 1; // Реализуем счетчик  
 
             PagesDTO dto;
             // Устанавливаем сортировку для каждой страницы
-            foreach(var pageId in idsArray)
+            foreach (var pageId in idsArray)
             {
                 var guid = new Guid(pageId);
                 dto = db.Pages.Find(guid);
@@ -162,6 +167,31 @@ namespace WebUI.Areas.Admin.Controllers
                 db.SaveChanges();
                 count++;
             }
+        }
+
+        [HttpGet]
+        public IActionResult EditSidebar()
+        {
+            var item = db.Sidebars.FirstOrDefault(); // TODO Изменить условия
+            if (item != null)
+            {
+                return View(new SidebarVM(item));
+            }
+
+            return Content("The sidebar does not exist.");
+            //return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public IActionResult EditSidebar(SidebarVM model)
+        {
+            var dto = db.Sidebars.Find(model.Id);
+            model.ToDbModel(dto);
+            db.SaveChanges();
+
+            // Передаем сообщение через TempData
+            TempData["SM"] = "You have edited sidebar!";
+            // Переадрессовываем пользователя на метод Index
+            return RedirectToAction("EditSidebar");
         }
     }
 }

@@ -5,26 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Admin Area</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/lib/jquery-ui/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/jquery-ui-1.12.1/jquery-ui.css" />
+    <link rel="stylesheet" href="~/lib/ckeditor-full/4.14.1/content/Scripts/ckeditor/contents.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            @Html.ActionLink("Dashboard", "Index", "Dashboard", null, new { @class = "navbar-brand" })
+            @Html.ActionLink("Dashboard", "Index", "Dashboard", "", new { @class = "navbar-brand" })
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                        @Html.ActionLink("Pages", "Index", "Pages", "", new { @class = "nav-link" })
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
+                        @Html.ActionLink("Sidebar", "EditSidebar", "Pages", "", new { @class = "nav-link" })
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
+                        @Html.ActionLink("Categories", "Categories", "Shop", "", new { @class = "nav-link" })
                     </li>
                 </ul>
                 <!-- New right menu-->
@@ -54,7 +55,8 @@
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/lib/jquery-ui-1.12.1/jquery-ui.min.js"></script>
+    <script src="~/lib/ckeditor-full/4.14.1/content/Scripts/ckeditor/ckeditor.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>ckeditor-full</id>
+    <version>4.14.1</version>
+    <authors>CKSource (http://cksource.com/)</authors>
+    <owners>ckeditor</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/ckeditor/ckeditor4-releases/blob/master/LICENSE.md</licenseUrl>
+    <projectUrl>https://github.com/ckeditor/ckeditor4-releases</projectUrl>
+    <iconUrl>https://c.cksource.com/a/1/img/nuget/ckeditor-4.png</iconUrl>
+    <description>JavaScript WYSIWYG web text editor.</description>
+    <releaseNotes>See https://github.com/ckeditor/ckeditor4-releases/blob/4.14.1/CHANGES.md for a complete list of changes.</releaseNotes>
+    <copyright>Copyright 2003-2019</copyright>
+    <tags>ckeditor editor wysiwyg html richtext text javascript</tags>
+  </metadata>
+</package>

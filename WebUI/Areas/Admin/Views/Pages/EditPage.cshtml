@@ -6,8 +6,6 @@
 }
 
 <h1>EditPage</h1>
-
-<h4>PageVM</h4>
 <hr />
 @if (TempData["SM"] != null)
 {
@@ -16,7 +14,7 @@
     </div>
 }
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-sm-10">
         <form method="post" asp-action="EditPage">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -61,4 +59,8 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        CKEDITOR.replace("Body")
+    </script>
 }
+
