@@ -4,9 +4,14 @@
     ViewData["Title"] = "Categories";
 }
 
-<h1>Categories</h1>
-
-<div class="nw-cat">
+<h2>Categories</h2>
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+<div class="new-cat">
     <div class="input-group mb-3">
         <div class="input-group-append">
             <span class="input-group-text" id="inputGroup-sizing-default">Category Name</span>
@@ -14,7 +19,7 @@
         <input type="text" id="newcatname" class="form-control" />
     </div>
     <p>
-        <a href="#" id="necatname" class="btn btn-success">Add a new category</a>
+        <a href="#" id="newcata" class="btn btn-success">Add a new category</a>
         <span class="ajax-text">
             <img src="~/Images/ajax-loader.gif" height="50" />
         </span>
@@ -27,8 +32,8 @@
 }
 else
 {
-    <table class="table">
-        <tr>
+    <table class="table sorting" id="pages">
+        <tr class="home">
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -36,12 +41,26 @@ else
         </tr>
         @foreach (var item in Model)
         {
-            <tr>
+            <tr id="id_@item.Id">
                 <td>
-                    @Html.EditorFor(modelItem => item.Name, new { htmlAttributes = new { @class = "form-control ", @readonly = "readonly" } })
+                    <div class="container">
+                        <div class="row">
+                            <div class="col">
+                                <div class="ajaxdivtd"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-0">
+                                <div class="ui-icon ui-icon-arrow-2-n-s" style="margin-top:10px;"></div>
+                            </div>
+                            <div class="col">
+                                @Html.EditorFor(modelItem => item.Name, new { htmlAttributes = new { @class = "form-control ", @readonly = "readonly" } })
+                            </div>
+                        </div>
+                    </div>
                 </td>
                 <td>
-                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.Id }, new { @class = "dalete btn btn-danger" })
+                    @Html.ActionLink("Delete", "DeleteCategory", new { id = item.Id }, new { @class = "delete btn btn-danger" })
                 </td>
             </tr>
         }
@@ -49,29 +68,6 @@ else
 }
 @section Scripts
 {
-    <script>
-        $(function () {
-
-            /* Add new category */
-        /*---------------------------------------*/
-            /* Confirm Page deletion */
-            $("a.delete").click(function () {
-                if (!confirm("Confirm Category deletion")) return false;
-            });
-            /*---------------------------------------*/
-            /* Sorting script */
-            $("table#pages tbody").sortable({
-                items: "tr:not(.home)",
-                placeholder: "ui-state-highlight",
-                update: function () {
-                    var ids = $("table#pages tbody").sortable("serialize");
-                    var url = "/Admin/Pages/ReorderPages";
-
-                    $.post(url, { ids });
-                }
-            });
-        });
-
-    </script>
+    <script src="~/js/CategoriesView.js"></script>
 }
 
