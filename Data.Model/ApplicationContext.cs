@@ -10,11 +10,12 @@ namespace Data.Model
         public DbSet<PagesDTO> Pages { get; set; }
         public DbSet<SidebarDTO> Sidebars { get; set; }
         public DbSet<CategoryDTO> Categories { get; set; }
+        public DbSet<ProductDTO> Products { get; set; }
 
-        public ApplicationContext(DbContextOptions<ApplicationContext> options)
-            : base(options)
-        {
-            Database.EnsureCreated();
-        }
+    public ApplicationContext(DbContextOptions<ApplicationContext> options)
+        : base(options)
+    {
+        Database.EnsureCreated();
     }
+}
 }
