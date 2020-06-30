@@ -138,27 +138,27 @@ namespace WebUI.Areas.Admin.Controllers
                 Price = model.Price,
                 CategoryId = model.CategoryId,
             };
-            
+
             db.Add(product);
             db.SaveChanges();
 
             #region Upload Image
             // Создаем необходимые ссылки деректории
             var uplDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
-            var pasString1 = Path.Combine(uplDir, "Products");
-            var pasString2 = Path.Combine(uplDir, "Products\\" + product.Id);
-            var pasString3 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Thumbs");
-            var pasString4 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Gallery");
-            var pasString5 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Gallery\\Thumbs");
+            var pathString1 = Path.Combine(uplDir, "Products");
+            var pathString2 = Path.Combine(uplDir, "Products\\" + product.Id);
+            var pathString3 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Thumbs");
+            var pathString4 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Gallery");
+            var pathString5 = Path.Combine(uplDir, "Products\\" + product.Id + "\\Gallery\\Thumbs");
 
             var originalDirectory = new DirectoryInfo(uplDir);
 
             // Проверяем наличие директорий (если нет, то создаем)
-            if (!Directory.Exists(pasString1)) Directory.CreateDirectory(pasString1);
-            if (!Directory.Exists(pasString2)) Directory.CreateDirectory(pasString2);
-            if (!Directory.Exists(pasString3)) Directory.CreateDirectory(pasString3);
-            if (!Directory.Exists(pasString4)) Directory.CreateDirectory(pasString4);
-            if (!Directory.Exists(pasString5)) Directory.CreateDirectory(pasString5);
+            if (!Directory.Exists(pathString1)) Directory.CreateDirectory(pathString1);
+            if (!Directory.Exists(pathString2)) Directory.CreateDirectory(pathString2);
+            if (!Directory.Exists(pathString3)) Directory.CreateDirectory(pathString3);
+            if (!Directory.Exists(pathString4)) Directory.CreateDirectory(pathString4);
+            if (!Directory.Exists(pathString5)) Directory.CreateDirectory(pathString5);
 
             // Проверяем, был ли файл загружен
             if (file == null || file.Length == 0)
@@ -188,20 +188,20 @@ namespace WebUI.Areas.Admin.Controllers
 
             // Сохраняем имя изображения в модель DTO
             product.ImageName = imageName;
+            db.SaveChanges();
 
             // Назначаем пути к оригинальному и уменьшенному изображению
-            var path = $"{pasString2}\\{imageName}";
-            var path2 = $"{pasString3}\\{imageName}";
+            var path = $"{pathString2}\\{imageName}";
+            var path2 = $"{pathString3}\\{imageName}";
 
             // Сохраняем оригинальное изображение
             using (var fileStream = new FileStream(path, FileMode.Create)) { file.CopyTo(fileStream); }
 
             // Создаем и сохраняем уменьшенное изображение
             var img = Image.Load(file.OpenReadStream());
-            img.Mutate(x => x.Resize(200, 200)); ;
+            img.Mutate(x => x.Resize(200, 200));
             img.Save(path2);
 
-            db.SaveChanges();
             #endregion
 
             TempData["SM"] = "You have added a product!";
@@ -211,7 +211,7 @@ namespace WebUI.Areas.Admin.Controllers
 
         // Урок 13
         //[HttpPost]
-        public IActionResult Products(int? page,Guid? catId)
+        public IActionResult Products(int? page, Guid? catId)
         {
             // Устанавливаем номер страницы
             var pageNumber = page ?? 1;
@@ -220,7 +220,7 @@ namespace WebUI.Areas.Admin.Controllers
             // Инициализируем List и заполняем данными
             List<ProductVM> listOfProductVM = db.Products
                 .Where(w => catId == null || catId == Guid.Empty || w.CategoryId == (Guid)catId)
-                .Select(s=> new ProductVM(s))
+                .Select(s => new ProductVM(s))
                 .ToList();
 
             // Заполняем категории данными
@@ -236,5 +236,171 @@ namespace WebUI.Areas.Admin.Controllers
             // Возвращаем в преставление
             return View(listOfProductVM);
         }
+
+        // Урок 14
+        [HttpGet]
+        public IActionResult EditProduct(Guid id)
+        {
+            var dto = db.Products.Find(id);
+            if (dto == null)
+            {
+                return Content("That product does not exist.");
+            }
+
+            var model = new ProductVM(dto);
+            model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
+
+            var uplDir = Path.Combine(_env.WebRootPath, "Images/Uploads/Products/" + id + "/Gallery/Thumbs");
+            model.GalleryImages = Directory.EnumerateFiles(uplDir).Select(s => Path.GetFileName(s));
+
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult EditProduct(ProductVM model, IFormFile file)
+        {
+            // Получить Id продукта
+            var id = model.Id;
+            // Заполняем список категориями и изображениями
+            model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
+            var uplDir = Path.Combine(_env.WebRootPath, "Images/Uploads/Products/" + id + "/Gallery/Thumbs");
+            model.GalleryImages = Directory.EnumerateFiles(uplDir).Select(s => Path.GetFileName(s));
+
+            // Проверяем модель на валидность
+            if (!ModelState.IsValid) return View(model);
+
+            // Проверяем имя продукта на уникальность
+            if (db.Products.Any(a => a.Id != id && a.Name == model.Name))
+            {
+                ModelState.AddModelError("", "That product name is taken!");
+                return View(model);
+            }
+            // Обновить продукт в БД
+            var dto = db.Products.Find(id);
+            dto.Name = model.Name;
+            dto.Slug = model.Name.Replace(" ", "-").ToLower();
+            dto.Description = model.Description;
+            dto.Price = model.Price;
+            dto.CategoryId = model.CategoryId;
+            dto.ImageName = model.ImageName;
+            db.SaveChanges();
+            TempData["SM"] = "You have edited the product!";
+
+            // Реализуем логику обработки изображений (Урок 15)
+            #region Image Upload
+            // Проверяем загрузку файла
+            if (file != null && file.Length > 0)
+            {
+                // Проверить расширение
+                var ext = file.ContentType.ToLower();
+                if (ext != "image/jpg"
+                    && ext != "image/jpeg"
+                    && ext != "image/pjpeg"
+                    && ext != "image/gif"
+                    && ext != "image/x-png"
+                    && ext != "image/png"
+                    )
+                {
+                    ModelState.AddModelError("", "The product image was not uploaded - wrong image format!");
+                    return View(model);
+                }
+                // Установить пути загрузки
+                var uploadDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
+                var pathString1 = Path.Combine(uploadDir, "Products\\" + id);
+                var pathString2 = Path.Combine(uploadDir, "Products\\" + id + "\\Thumbs");
+
+                // Удаляем существующие файлы и директории
+                var di1 = new DirectoryInfo(pathString1);
+                var di2 = new DirectoryInfo(pathString2);
+                foreach (var file2 in di1.GetFiles())
+                {
+                    file2.Delete();
+                }
+                foreach (var file3 in di2.GetFiles())
+                {
+                    file3.Delete();
+                }
+                // Сохранить имя изображение
+                var imageName = file.FileName;
+                dto.ImageName = imageName;
+                db.SaveChanges();
+
+                // Назначаем пути к оригинальному и уменьшенному изображению
+                var path = $"{pathString1}\\{imageName}";
+                var path2 = $"{pathString2}\\{imageName}";
+
+                // Сохраняем оригинальное изображение
+                using (var fileStream = new FileStream(path, FileMode.Create)) { file.CopyTo(fileStream); }
+
+                // Создаем и сохраняем уменьшенное изображение
+                var img = Image.Load(file.OpenReadStream());
+                img.Mutate(x => x.Resize(200, 200)); ;
+                img.Save(path2);
+            }
+            #endregion
+
+            return RedirectToAction("EditProduct");
+        }
+
+        [HttpGet]
+        public IActionResult DeleteProduct(Guid id)
+        {
+            // Удаляем товар из БД
+            var dto = db.Products.Find(id);
+            db.Products.Remove(dto);
+            db.SaveChanges();
+
+            // Удаляем дериктории товара (изображения)
+            var uplDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
+            var pathString = Path.Combine(uplDir, "Products\\" + id);
+
+            var originalDirectory = new DirectoryInfo(uplDir);
+            if (Directory.Exists(pathString)) Directory.Delete(pathString, true);
+
+            TempData["SM"] = "The product was deleted!";
+            return RedirectToAction("Products");
+        }
+
+        // Урок 16
+        [HttpPost]
+        public void SaveGalleryImages(Guid id)
+        {
+            // Перебрать все полученные файлы
+            foreach (var file in Request.Form.Files)
+            {
+                // Проверить на null
+                if (file != null && file.Length > 0)
+                {
+                    // Назначить все пути к директориям
+                    var uplDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
+                    var pathString1 = Path.Combine(uplDir, "Products\\" + id + "\\Gallery");
+                    var pathString2 = Path.Combine(pathString1, "Thumbs");
+
+                    // Назначить пути изображений
+                    var path = $"{pathString1}\\{file.FileName}";
+                    var path2 = $"{pathString2}\\{file.FileName}";
+
+                    // Сохраняем оригинальное изображение
+                    using (var fileStream = new FileStream(path, FileMode.Create)) { file.CopyTo(fileStream); }
+
+                    // Создаем и сохраняем уменьшенное изображение
+                    var img = Image.Load(file.OpenReadStream());
+                    img.Mutate(x => x.Resize(200, 200));
+                    img.Save(path2);
+                }
+            }
+        }
+
+        [HttpPost]
+        public void DeleteImage(string id, string imageName)
+        {
+            var fulpath1 = Path.Combine(_env.WebRootPath, "Images/Uploads/Products/" + id + "/Gallery/" + imageName);
+            var fulpath2 = Path.Combine(_env.WebRootPath, "Images/Uploads/Products/" + id + "/Gallery/Thumbs/" + imageName);
+
+            if (System.IO.File.Exists(fulpath1))
+                System.IO.File.Delete(fulpath1);
+            if (System.IO.File.Exists(fulpath2))
+                System.IO.File.Delete(fulpath2);
+        }
+
     }
 }

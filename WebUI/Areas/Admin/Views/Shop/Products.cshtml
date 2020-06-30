@@ -24,7 +24,13 @@
 </select>
 <br />
 <br />
-
+<hr />
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
 <p>
     @Html.ActionLink("Add new Product", "AddProduct", new { }, htmlAttributes: new { @class = "btn btn-success" })
 </p>
@@ -65,7 +71,7 @@
             </td>
             <td>
                 @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }, new { @class = "btn btn-info" })
-                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "btn btn-danger" })
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "btn btn-danger delete" })
             </td>
         </tr>
     }

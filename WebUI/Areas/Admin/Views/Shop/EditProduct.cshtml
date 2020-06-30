@@ -1,0 +1,150 @@
+﻿@model WebUI.Areas.Admin.Models.Shop.ProductVM
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<h1>Edit Product</h1>
+
+<hr />
+@if (TempData["SM"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SM"]
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-10">
+        <form asp-action="EditProduct" asp-controller="Shop" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <div class="col-md-10">
+                    <textarea rows="3" asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="Price" class="form-control" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <div class="col-md-10">
+                    <select asp-for="CategoryId" asp-items="Model.Categories" class="form-control">
+                        <option selected="selected" disabled="disabled">Select Category</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ImageName" class="control-label"></label>
+                <div class="col-md-10">
+                    <input asp-for="ImageName" class="form-control" />
+                    @if (Model.ImageName != null)
+                    {
+                        <img src="~/Images/Uploads/Products/@Model.Id/Thumbs/@Model.ImageName" />
+                    }
+                    <br />
+                    <br />
+                    <img id="imgpreview" src="~/Images/no_image.png" />
+                    <div class="col-md-10">
+                        <input type="file" name="file" id="imageUpload" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Edit Product" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Урок 15-->
+<hr />
+@if (!Model.GalleryImages.Any())
+{
+    <h3>There are no gallery images for this product.</h3>
+}
+<form action="/admin/shop/SaveGalleryImages/@Model.Id" method="post" enctype="multipart/form-data" class="dropzone" id="dropzoneForm">
+    <div class="fallback">
+        <input type="file" name="file" multiple="" />
+        <input type="submit" value="Upload" />
+    </div>
+</form>
+
+<div class="row">
+    @foreach (var image in Model.GalleryImages)
+    {
+        <div class="col">
+            <div class="galleryStyle">
+                <div style="width:200px; height:200px;">
+                    <img src="/Images/Uploads/Products/@Model.Id/Gallery/Thumbs/@image" />
+                </div>
+                <div style="text-align:center;">
+                    @Html.ActionLink(linkText: "Delete", actionName: "DeleteImage", null, null, new { @class = "deleteimage btn btn-danger", data_name = image, style = "margin:10px;" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+<!--*************************************************************************************************-->
+<br />
+<br />
+<div>
+    <a asp-action="Products">Back to Products</a>
+</div>
+
+<link href="~/lib/dropzone/4.3.0/content/Scripts/dropzone/basic.css" rel="stylesheet" />
+<link href="~/lib/dropzone/4.3.0/content/Scripts/dropzone/dropzone.css" rel="stylesheet" />
+
+@section Scripts
+{
+    <script src="~/js/AddProduct.js"></script>
+    <script src="~/lib/dropzone/4.3.0/content/Scripts/dropzone/dropzone.js"></script>
+
+    <script>
+        /* Dropzone js*/
+        Dropzone.options.dropzoneForm = {
+            acceptedFiles: "image/*",
+            init: function () {
+                this.on("complete",
+                    function (file) {
+                        if (this.getUploadingFiles().length === 0 && this.getQueuedFiles().length === 0) {
+                            location.reload();
+                        }
+                    });
+                this.on("sending",
+                    function (file, xhr, formData) {
+                        formData.append("id", "@Model.Id");
+                    });
+            }
+        };
+
+        /* Delete gallery image */
+        $("a.deleteimage").click(function (e) {
+            e.preventDefault();
+            if (!confirm("Confirm deletion")) return false;
+
+            var $this = $(this);
+            var url = "/admin/shop/DeleteImage";
+            var imgName = $this.data("name");
+
+            $.post(url, { id: "@Model.Id", imageName: imgName }, function (data) { $this.parent().parent().parent().fadeOut("slow");});
+        });
+    </script>
+}
+

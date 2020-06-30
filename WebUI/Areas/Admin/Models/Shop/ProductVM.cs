@@ -38,6 +38,7 @@ namespace WebUI.Areas.Admin.Models.Shop
         public Guid CategoryId { get; set; }
 
         //public string CategoryName { get; set; }
+        [DisplayName("Image")]
         public string ImageName { get; set; }
 
         public IEnumerable<SelectListItem> Categories { get; set; }
