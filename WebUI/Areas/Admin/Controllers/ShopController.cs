@@ -18,6 +18,7 @@ using SixLabors.ImageSharp.Processing;
 using WebUI.Areas.Admin.Models;
 using WebUI.Areas.Admin.Models.Shop;
 using X.PagedList;
+using Data.Tools.Extensions;
 
 namespace WebUI.Areas.Admin.Controllers
 {
@@ -169,14 +170,7 @@ namespace WebUI.Areas.Admin.Controllers
             }
 
             // Проверяем расширение файла
-            var ext = file.ContentType.ToLower();
-            if (ext != "image/jpg"
-                && ext != "image/jpeg"
-                && ext != "image/pjpeg"
-                && ext != "image/gif"
-                && ext != "image/x-png"
-                && ext != "image/png"
-                )
+            if (!file.IsImage())
             {
                 model.Categories = new SelectList(db.Categories.ToList(), dataValueField: "Id", dataTextField: "Name");
                 ModelState.AddModelError("", "The product image was not uploaded - wrong image format!");
@@ -199,7 +193,8 @@ namespace WebUI.Areas.Admin.Controllers
 
             // Создаем и сохраняем уменьшенное изображение
             var img = Image.Load(file.OpenReadStream());
-            img.Mutate(x => x.Resize(200, 200));
+            var newSize = img.ScaledImageSize(new Size(200, 200));
+            img.Mutate(x => x.Resize(newSize));
             img.Save(path2);
 
             #endregion
@@ -290,19 +285,12 @@ namespace WebUI.Areas.Admin.Controllers
             // Проверяем загрузку файла
             if (file != null && file.Length > 0)
             {
-                // Проверить расширение
-                var ext = file.ContentType.ToLower();
-                if (ext != "image/jpg"
-                    && ext != "image/jpeg"
-                    && ext != "image/pjpeg"
-                    && ext != "image/gif"
-                    && ext != "image/x-png"
-                    && ext != "image/png"
-                    )
+                if (!file.IsImage()) // Проверить расширение
                 {
                     ModelState.AddModelError("", "The product image was not uploaded - wrong image format!");
                     return View(model);
                 }
+
                 // Установить пути загрузки
                 var uploadDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
                 var pathString1 = Path.Combine(uploadDir, "Products\\" + id);
@@ -333,7 +321,8 @@ namespace WebUI.Areas.Admin.Controllers
 
                 // Создаем и сохраняем уменьшенное изображение
                 var img = Image.Load(file.OpenReadStream());
-                img.Mutate(x => x.Resize(200, 200)); ;
+                var newSize = img.ScaledImageSize(new Size(200, 200));
+                img.Mutate(x => x.Resize(newSize)); ;
                 img.Save(path2);
             }
             #endregion
@@ -370,6 +359,8 @@ namespace WebUI.Areas.Admin.Controllers
                 // Проверить на null
                 if (file != null && file.Length > 0)
                 {
+                    if (!file.IsImage()) continue;
+
                     // Назначить все пути к директориям
                     var uplDir = Path.Combine(_env.WebRootPath, "Images\\Uploads");
                     var pathString1 = Path.Combine(uplDir, "Products\\" + id + "\\Gallery");
@@ -384,7 +375,9 @@ namespace WebUI.Areas.Admin.Controllers
 
                     // Создаем и сохраняем уменьшенное изображение
                     var img = Image.Load(file.OpenReadStream());
-                    img.Mutate(x => x.Resize(200, 200));
+
+                    var newSize = img.ScaledImageSize(new Size(200, 200));
+                    img.Mutate(x => x.Resize(newSize));
                     img.Save(path2);
                 }
             }
