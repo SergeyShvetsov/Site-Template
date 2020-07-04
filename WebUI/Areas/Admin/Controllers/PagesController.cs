@@ -16,6 +16,7 @@ using Data.Tools.Extensions;
 
 namespace WebUI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class PagesController : Controller
     {
         private ApplicationContext db;

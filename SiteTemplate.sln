@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppResources", "AppResource
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "WebUI\WebUI.csproj", "{113EF2F8-9945-431A-90E4-AD953CF157AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Tools", "Data.Tools\Data.Tools.csproj", "{8E5970FC-E739-42F5-8735-96A941F8618A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Tools", "Data.Tools\Data.Tools.csproj", "{8E5970FC-E739-42F5-8735-96A941F8618A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -22,6 +22,7 @@ using Data.Tools.Extensions;
 
 namespace WebUI.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ShopController : Controller
     {
         private ApplicationContext db;

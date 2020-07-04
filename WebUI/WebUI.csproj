@@ -9,18 +9,22 @@
     <Compile Remove="wwwroot\fileman\tmp\**" />
     <Compile Remove="wwwroot\fileman\Uploads\Documents\**" />
     <Compile Remove="wwwroot\fileman\Uploads\FLV\**" />
+    <Compile Remove="wwwroot\Images\Uploads\**" />
     <Content Remove="wwwroot\fileman\aspnet_client\**" />
     <Content Remove="wwwroot\fileman\tmp\**" />
     <Content Remove="wwwroot\fileman\Uploads\Documents\**" />
     <Content Remove="wwwroot\fileman\Uploads\FLV\**" />
+    <Content Remove="wwwroot\Images\Uploads\**" />
     <EmbeddedResource Remove="wwwroot\fileman\aspnet_client\**" />
     <EmbeddedResource Remove="wwwroot\fileman\tmp\**" />
     <EmbeddedResource Remove="wwwroot\fileman\Uploads\Documents\**" />
     <EmbeddedResource Remove="wwwroot\fileman\Uploads\FLV\**" />
+    <EmbeddedResource Remove="wwwroot\Images\Uploads\**" />
     <None Remove="wwwroot\fileman\aspnet_client\**" />
     <None Remove="wwwroot\fileman\tmp\**" />
     <None Remove="wwwroot\fileman\Uploads\Documents\**" />
     <None Remove="wwwroot\fileman\Uploads\FLV\**" />
+    <None Remove="wwwroot\Images\Uploads\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,12 +35,14 @@
     <PackageReference Include="bootstrap" Version="4.5.0" />
     <PackageReference Include="ckeditor-full" Version="4.14.1" />
     <PackageReference Include="dropzone" Version="4.3.0" />
+    <PackageReference Include="Fancybox" Version="2.1.5" />
     <PackageReference Include="jQuery" Version="3.5.1" />
     <PackageReference Include="jQuery.UI" Version="1.12.1.1" />
     <PackageReference Include="jQuery.Validation" Version="1.19.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
@@ -56,7 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 

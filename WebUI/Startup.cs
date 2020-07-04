@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.Model.Models;
@@ -11,6 +12,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,11 +43,14 @@ namespace WebUI
             //services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
             //            .AddEntityFrameworkStores<ApplicationContext>();
 
+            services.AddDistributedMemoryCache();
+            services.AddHttpContextAccessor();
+            services.AddSession();
+
             services.AddControllersWithViews(mvcOtions =>
             {
                 mvcOtions.EnableEndpointRouting = false;
             });
-            //services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,14 +72,28 @@ namespace WebUI
             app.UseAuthentication();    // подключение аутентификации
             app.UseAuthorization();
 
+            app.UseSession();
+
             app.UseMvc(routes =>
             {
-                routes.MapRoute(name: "areas", template: "{area=Admin}/{controller=Pages}/{action=Index}/{id?}");
+                routes.MapRoute(name: "areaRoute", template: "{area:exists}/{controller=Pages}/{action=Index}/{id?}");
+                routes.MapRoute(name: "pagesMenu", template: "{page?}",defaults: new { controller="Pages", action="Index"});
+                routes.MapRoute(name: "cart", template: "Cart/{action?}/{id?}",defaults: new { controller = "Cart", action = "Index" });
+                routes.MapRoute(name: "pages", template: "Pages/{action?}/{id?}", defaults: new { controller = "Pages", action = "Index" });
+                routes.MapRoute(name: "shop", template: "Shop/{action?}/{id?}", defaults: new { controller = "Shop", action = "Index" });
+                //routes.MapRoute(name: "default", template: "{controller=Pages}/{action=Index}/{id?}");
             });
+
+            //app.UseRouting();
 
             //app.UseEndpoints(endpoints =>
             //{
-            //    endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+            //    endpoints.MapControllerRoute(
+            //        name: "Areas",
+            //      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+            //    endpoints.MapControllerRoute(
+            //        name: "Pages",
+            //        pattern: "{controller=Pages}/{action=Index}/{page?}");
             //    endpoints.MapRazorPages();
             //});
 

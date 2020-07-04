@@ -1,4 +1,4 @@
-Start application. 07/01/2020 12:37:15
+Start application. 07/04/2020 15:17:29
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: D:\Work\SiteTemplate\WebUI

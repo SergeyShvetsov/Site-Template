@@ -1,0 +1,76 @@
+﻿@model IEnumerable<WebUI.Models.Cart.CartVM>
+
+@{
+    ViewData["Title"] = "Cart Details";
+}
+
+<h1>Cart Details</h1>
+@if (ViewBag.Message != null)
+{
+    <h3>@ViewBag.Message</h3>
+}
+else
+{
+    <table class="table">
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Price
+            </th>
+            <th>
+                Image
+            </th>
+            <th></th>
+            <th>
+                Total
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td class="qty@(item.Id)">
+                    @Html.DisplayFor(modelItem => item.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)$
+                </td>
+                <td>
+                    <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.Image" />
+                </td>
+                <td>
+                    <a href="#" class="incproduct" data-id="@item.Id">+</a>
+                    <a href="#" class="decproduct" data-id="@item.Id">-</a>
+                    <a href="#" class="removeproduct" data-id="@item.Id">Remove</a>
+                </td>
+                <td class="total@(item.Id)">
+                    @Html.DisplayFor(modelItem => item.Total)$
+                </td>
+                <td>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class="grandtotal"><b>Grand total: </b><span>@ViewBag.GrandTotal$</span></td>
+        </tr>
+    </table>
+}
+@section Scripts
+{
+    <script src="~/js/IncrementProduct.js"></script>
+}
