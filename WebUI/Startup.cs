@@ -7,6 +7,7 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using Data.Model;
 using Data.Model.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -42,6 +43,13 @@ namespace WebUI
             //// добавление сервисов Idenity
             //services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
             //            .AddEntityFrameworkStores<ApplicationContext>();
+            // установка конфигурации подключения
+            
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options => //CookieAuthenticationOptions
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/Account/Login");
+                });
 
             services.AddDistributedMemoryCache();
             services.AddHttpContextAccessor();
@@ -77,10 +85,11 @@ namespace WebUI
             app.UseMvc(routes =>
             {
                 routes.MapRoute(name: "areaRoute", template: "{area:exists}/{controller=Pages}/{action=Index}/{id?}");
-                routes.MapRoute(name: "pagesMenu", template: "{page?}",defaults: new { controller="Pages", action="Index"});
-                routes.MapRoute(name: "cart", template: "Cart/{action?}/{id?}",defaults: new { controller = "Cart", action = "Index" });
+                routes.MapRoute(name: "pagesMenu", template: "{page?}", defaults: new { controller = "Pages", action = "Index" });
+                routes.MapRoute(name: "cart", template: "Cart/{action?}/{id?}", defaults: new { controller = "Cart", action = "Index" });
                 routes.MapRoute(name: "pages", template: "Pages/{action?}/{id?}", defaults: new { controller = "Pages", action = "Index" });
                 routes.MapRoute(name: "shop", template: "Shop/{action?}/{id?}", defaults: new { controller = "Shop", action = "Index" });
+                routes.MapRoute(name: "account", template: "Account/{action?}/{id?}", defaults: new { controller = "Account", action = "Index" });
                 //routes.MapRoute(name: "default", template: "{controller=Pages}/{action=Index}/{id?}");
             });
 

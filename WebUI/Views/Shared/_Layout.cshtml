@@ -3,54 +3,85 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - Shoping Caet</title>
+    <title>@ViewBag.Title - Shoping Cart</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="/">Demonick Shop</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav mr-auto">
+                @await Component.InvokeAsync("PagesMenu")
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li>@Html.ActionLink("Logout", "Logout", "Account", new { }, new { @class = "navbar-text", style = "text-decoration:none;" })</li>
+                    if (!User.IsInRole("Admin"))
+                    {
+                        @await Component.InvokeAsync("UserNav", ViewBag.Title == "User Profile")
+                    }
+                }
+                else
+                {
+                    if (ViewBag.Title == "Login")
+                    {
+                        <li class="navbar-text">@Html.ActionLink("Login", "Login", "Account", new { }, new { @class = "active", style = "text-decoration:none;" })</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Login", "Login", "Account", new { }, new { @class = "navbar-text", style = "text-decoration:none;" })</li>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="/">Demonick Shop</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            @await Component.InvokeAsync("PagesMenu")
-        </ul>
-        <span class="navbar-text">
-            @await Component.InvokeAsync("Cart")
-        </span>
-    </div>
-</nav>
-<div class="container body-content">
-    <div class="row">
-        <div class="col-sm-12 col-md-3 list-group">
-            @await Component.InvokeAsync("CategoryMenu")
+                    }
+                }
+            </ul>
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                <span class="navbar-text">
+                    @Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin" }, null)
+                </span>
+            }
+            else if (ViewBag.Title != "Cart Details")
+            {
+                <span class="navbar-text">
+                    @await Component.InvokeAsync("Cart")
+                </span>
+            }
+
         </div>
-        @if (ViewBag.SideBar != null && ViewBag.SideBar)
-        {
-            <div class="col">
-                @RenderBody()
+    </nav>
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-sm-12 col-md-3 list-group">
+                @await Component.InvokeAsync("CategoryMenu")
             </div>
-            <div class="col-sm-12 col-md-3" style="border:1px solid red;">
-                @await Component.InvokeAsync("Sidebar")
-            </div>
-        }
-        else
-        {
-            <div class="col">
-                @RenderBody()
-            </div>
-        }
+            @if (ViewBag.SideBar != null && ViewBag.SideBar)
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+                <div class="col-sm-12 col-md-3" style="border:1px solid red;">
+                    @await Component.InvokeAsync("Sidebar")
+                </div>
+            }
+            else
+            {
+                <div class="col">
+                    @RenderBody()
+                </div>
+            }
+        </div>
     </div>
-</div>
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; @DateTime.Now.Year - Demonick Shop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Demonick Shop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+</body>
+</html>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @RenderSection("Scripts", required: false)
-</html>

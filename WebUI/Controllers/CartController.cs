@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Data.Model;
+using Data.Model.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Newtonsoft.Json;
 using WebUI.Extensions;
 using WebUI.Models.Cart;
 
@@ -49,12 +47,12 @@ namespace WebUI.Controllers
 
             // Получаем продуст
             var product = db.Products.Find(uid);
-            var productInCart = cart.FirstOrDefault(x => x.Id == uid);
+            var productInCart = cart.FirstOrDefault(x => x.ProductId == uid);
             if (productInCart == null)
             {
                 cart.Add(new CartVM
                 {
-                    Id = product.Id,
+                    ProductId = product.Id,
                     Name = product.Name,
                     Quantity = 1,
                     Price = product.Price,
@@ -85,7 +83,7 @@ namespace WebUI.Controllers
         {
             var uid = new Guid(id);
             var cart = _session.Get<List<CartVM>>("cart");
-            var model = cart.FirstOrDefault(x => x.Id == uid);
+            var model = cart.FirstOrDefault(x => x.ProductId == uid);
             model.Quantity++;
 
             _session.Set<List<CartVM>>("cart", cart);
@@ -99,7 +97,7 @@ namespace WebUI.Controllers
         {
             var uid = new Guid(id);
             var cart = _session.Get<List<CartVM>>("cart");
-            var model = cart.FirstOrDefault(x => x.Id == uid);
+            var model = cart.FirstOrDefault(x => x.ProductId == uid);
             if (model.Quantity > 1)
             {
                 model.Quantity--;
@@ -120,9 +118,51 @@ namespace WebUI.Controllers
         {
             var uid = new Guid(id);
             var cart = _session.Get<List<CartVM>>("cart");
-            var model = cart.FirstOrDefault(x => x.Id == uid);
+            var model = cart.FirstOrDefault(x => x.ProductId == uid);
             cart.Remove(model);
             _session.Set<List<CartVM>>("cart", cart);
+        }
+
+        // Урок 26
+        public IActionResult PayPalPartial()
+        {
+            var cart = _session.Get<List<CartVM>>("cart") ?? new List<CartVM>();
+            return PartialView("_PaypalPartial", cart);
+        }
+
+        [HttpPost]
+        public void PlaceOrder()
+        {
+            var cart = _session.Get<List<CartVM>>("cart") ?? new List<CartVM>();
+            // Получить имя пользователя и Id пользователя
+            var userName = User.Identity.Name;
+            var user = db.Users.FirstOrDefault(x => x.UserName == userName);
+            // Заполняем OrderDTO
+            var order = new OrderDTO()
+            {
+                UserId = user.Id,
+                CreatedAt = DateTime.Now
+            };
+
+            foreach (var item in cart)
+            {
+                db.OrderDetails.Add(new OrderDetailsDTO
+                {
+                    OrderId = order.Id,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                }
+                );
+            }
+
+            db.Orders.Add(order);
+            db.SaveChanges();
+
+            // отправить письмо на почту Admin
+            Emailer.SendOrderMail(order.Id, cart);
+            // Обнулить сессию
+            _session.Set<CartVM>("cart", null);
         }
     }
 }

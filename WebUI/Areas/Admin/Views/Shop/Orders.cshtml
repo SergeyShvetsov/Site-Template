@@ -1,0 +1,64 @@
+﻿@model IEnumerable<WebUI.Areas.Admin.Models.Shop.OrderForAdminVM>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h1>Orders</h1>
+@if (!Model.Any())
+{
+    <h2 class="text-center">There are no orders.</h2>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.OrderId)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UserName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Total)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreatedAt)
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+
+                <td>
+                    @foreach (var itm in item.Products)
+                    {
+                        @itm.ProductName @:-  @itm.Quantyty x @itm.Price$ = @itm.Total$ <br />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)$
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                </td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+

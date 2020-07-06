@@ -19,10 +19,12 @@ using WebUI.Areas.Admin.Models;
 using WebUI.Areas.Admin.Models.Shop;
 using X.PagedList;
 using Data.Tools.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         private ApplicationContext db;
@@ -396,5 +398,37 @@ namespace WebUI.Areas.Admin.Controllers
                 System.IO.File.Delete(fulpath2);
         }
 
+        [HttpGet]
+        public IActionResult Orders()
+        {
+            var ordersForAdmin = new List<OrderForAdminVM>();
+            foreach (var order in db.Orders.Select(x => new OrderVM(x)).ToList())
+            {
+                var products = new List<OrderItemVM>();
+                var orderDetailsList = db.OrderDetails.Where(w => w.OrderId == order.Id).ToList();
+                var user = db.Users.FirstOrDefault(x => x.Id == order.UserId);
+                var userName = user.UserName;
+
+                foreach (var orderDetail in orderDetailsList)
+                {
+                    var product = db.Products.FirstOrDefault(x => x.Id == orderDetail.ProductId);
+                    products.Add(new OrderItemVM
+                    {
+                        ProductName = product.Name,
+                        Price = orderDetail.Price,
+                        Quantyty = orderDetail.Quantity
+                    });
+                }
+                ordersForAdmin.Add(new OrderForAdminVM
+                {
+                    OrderId = order.Id,
+                    UserName = userName,
+                    CreatedAt = order.CreatedAt,
+                    Products = products
+                });
+            }
+
+            return View(ordersForAdmin);
+        }
     }
 }

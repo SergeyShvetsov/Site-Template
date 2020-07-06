@@ -11,6 +11,11 @@
 }
 else
 {
+    <div class="ajaxbg">
+        <span>
+            <img src="~/Images/ajax-loader.gif" height="100" width="150" />
+        </span>
+    </div>
     <table class="table">
         <tr>
             <th>
@@ -38,21 +43,21 @@ else
                 <td>
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
-                <td class="qty@(item.Id)">
+                <td class="qty@(item.ProductId)">
                     @Html.DisplayFor(modelItem => item.Quantity)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Price)$
                 </td>
                 <td>
-                    <img src="/Images/Uploads/Products/@item.Id/Thumbs/@item.Image" />
+                    <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />
                 </td>
                 <td>
-                    <a href="#" class="incproduct" data-id="@item.Id">+</a>
-                    <a href="#" class="decproduct" data-id="@item.Id">-</a>
-                    <a href="#" class="removeproduct" data-id="@item.Id">Remove</a>
+                    <a href="#" class="incproduct" data-id="@item.ProductId">+</a>
+                    <a href="#" class="decproduct" data-id="@item.ProductId">-</a>
+                    <a href="#" class="removeproduct" data-id="@item.ProductId">Remove</a>
                 </td>
-                <td class="total@(item.Id)">
+                <td class="total@(item.ProductId)">
                     @Html.DisplayFor(modelItem => item.Total)$
                 </td>
                 <td>
@@ -69,6 +74,30 @@ else
             <td class="grandtotal"><b>Grand total: </b><span>@ViewBag.GrandTotal$</span></td>
         </tr>
     </table>
+    <div class="paypaldiv">
+        <form class="paypalform" action="https://www.sandbox.paypal.com/us/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_cart">
+            <input type="hidden" name="upload" value="1" />
+            <input type="hidden" name="business" value="account@paypal.com">
+            @{
+                int count = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <input type="hidden" name="item_name_@count" value="@item.Name">
+                <input type="hidden" name="amount_@count" value="@item.Price.ToString(new System.Globalization.CultureInfo("en-US"))">
+                <input type="hidden" name="quantity_@count" value="@item.Quantity">
+                count++;
+            }
+
+            <input type="hidden" name="currency_code" value="EUR">
+            <div style="display: none;">
+                <input type="image" src="http://www.paypal.com/en_US/i/btn/x-click-but01.gif" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+            </div>
+        </form>
+    </div>
+    <br />
+    <a href="#" class="placeorder btn btn-primary float-right">Checkout</a>
 }
 @section Scripts
 {

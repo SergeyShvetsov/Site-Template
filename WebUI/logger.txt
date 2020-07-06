@@ -1,4 +1,7 @@
-Start application. 07/04/2020 15:17:29
+Start application. 07/06/2020 18:37:08
 Application started. Press Ctrl+C to shut down.
 Hosting environment: Development
 Content root path: D:\Work\SiteTemplate\WebUI
+Navigations 'OrderDetailsDTO.Order' and 'OrderDTO.Products' were separated into two relationships as ForeignKeyAttribute was specified on navigations on both sides.
+No type was specified for the decimal column 'Price' on entity type 'OrderDetailsDTO'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values using 'HasColumnType()'.
+No type was specified for the decimal column 'Price' on entity type 'ProductDTO'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values using 'HasColumnType()'.

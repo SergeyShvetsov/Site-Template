@@ -55,7 +55,10 @@ namespace WebUI.Controllers
             var model = new ProductVM(dto);
             // Получаем изображения из галереи
             var uplDir = Path.Combine(_env.WebRootPath, "Images/Uploads/Products/" + dto.Id + "/Gallery/Thumbs");
-            model.GalleryImages = Directory.EnumerateFiles(uplDir).Select(s => Path.GetFileName(s));
+            if (Directory.Exists(uplDir))
+            {
+                model.GalleryImages = Directory.EnumerateFiles(uplDir).Select(s => Path.GetFileName(s));
+            }
 
             return View("ProductDetails", model);
         }

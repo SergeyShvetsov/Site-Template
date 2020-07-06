@@ -13,10 +13,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using WebUI.Areas.Admin.Models;
 using Data.Tools.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin")]
     public class PagesController : Controller
     {
         private ApplicationContext db;
